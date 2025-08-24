@@ -87,64 +87,75 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
     }, spinDurationMs + 60);
   }
 
-  const size = 360; // SVG dùng size cố định, responsive sẽ do CSS điều chỉnh
+  // SVG gốc là 360x360
+  const size = 360;
   const r = size / 2 - 6;
   const cx = size / 2;
   const cy = size / 2;
 
   return (
-    <div className="wheel-container">
-      <canvas ref={canvasRef} className="wheel-canvas" />
+    <>
+      <div className="wheel-container">
+        <canvas ref={canvasRef} className="wheel-canvas" />
 
-      <div style={{ position: "relative" }}>
-        <div className="wheel-button" onClick={spin}>
-          GO
-          <div className="wheel-button-arrow" />
-        </div>
+        <div style={{ position: "relative" }}>
+          <div className="wheel-button" onClick={spin}>
+            GO
+            <div className="wheel-button-arrow" />
+          </div>
 
-        <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
-          <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
-            <circle cx={cx} cy={cy} r={r + 4} fill="#f3f4f6" />
-            {Array.from({ length: n }).map((_, i) => {
-              const start = i * sliceAngle;
-              const end = start + sliceAngle;
-              const path = arcPath(cx, cy, r, start, end);
-              const fill = segments[i]?.color || autoColor(i);
-              const mid = start + sliceAngle / 2;
-              const labelPos = polarToCartesian(cx, cy, r * 0.68, mid);
-              const rotateText = mid + 90;
-              return (
-                <g key={i}>
-                  <path d={path} fill={fill} stroke="#fff" strokeWidth={2} />
-                  {segments[i] && (
-                    <g transform={`translate(${labelPos.x}, ${labelPos.y}) rotate(${rotateText})`}>
-                      <text
-                        x={0}
-                        y={0}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        style={{ fontSize: 12, fontWeight: 700, fill: "#111827" }}
-                      >
-                        {segments[i].label}
-                      </text>
-                    </g>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
+          <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
+            <svg viewBox={`0 0 ${size} ${size}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+              <circle cx={cx} cy={cy} r={r + 4} fill="#f3f4f6" />
+              {Array.from({ length: n }).map((_, i) => {
+                const start = i * sliceAngle;
+                const end = start + sliceAngle;
+                const path = arcPath(cx, cy, r, start, end);
+                const fill = segments[i]?.color || autoColor(i);
+                const mid = start + sliceAngle / 2;
+                const labelPos = polarToCartesian(cx, cy, r * 0.6, mid);
+                const rotateText = mid + 90;
+                return (
+                  <g key={i}>
+                    <path d={path} fill={fill} stroke="#fff" strokeWidth={2} />
+                    {segments[i] && (
+                      <g transform={`translate(${labelPos.x}, ${labelPos.y}) rotate(${rotateText})`}>
+                        <text
+                          x={0}
+                          y={0}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          style={{
+                            fontSize: size * 0.045,
+                            fontWeight: 700,
+                            fill: "#111827",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          {segments[i].label}
+                        </text>
+                      </g>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
         </div>
       </div>
 
+      {/* Popup luôn tách ra ngoài vòng quay */}
       {showPopup && resultIndex !== null && (
         <div className="popup-overlay" onClick={() => setShowPopup(false)}>
           <div className="popup-box" onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ marginBottom: 12 }}>🎉 Chúc mừng!</h2>
-            <p>Bạn đã trúng: <strong>{segments[resultIndex].label}</strong></p>
+            <h2>🎉 Chúc mừng!</h2>
+            <p>
+              Bạn đã trúng: <strong>{segments[resultIndex].label}</strong>
+            </p>
             <button onClick={() => setShowPopup(false)}>Đóng</button>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

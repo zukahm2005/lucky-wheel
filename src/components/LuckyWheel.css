@@ -52,6 +52,8 @@
   background: #fff;
   margin: 0 auto;
   transition: transform 4.5s cubic-bezier(0.12, 0.11, 0, 1);
+  aspect-ratio: 1 / 1;
+  width: 500px; /* mặc định PC */
 }
 
 /* Popup overlay */
@@ -68,94 +70,155 @@
 /* Popup box */
 .popup-box {
   background: #fff;
-  padding: 16px 20px;
-  border-radius: 12px;
+  padding: 32px 28px;
+  border-radius: 16px;
   text-align: center;
   width: 90%;
-  max-width: 400px;
-  z-index: 2000;
+  max-width: 450px;
+
+  /* luôn giữ popup to */
+  min-height: 400px;
+  max-height: 80vh;
+
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  animation: popupScale 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* giãn đều h2 - p - button */
+  align-items: center;
 }
 
-/* Nút đóng trong popup */
+.popup-box h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.popup-box p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.popup-box strong {
+  color: #e11d48;
+  font-weight: 700;
+}
+
+/* Nút trong popup */
 .popup-box button {
-  margin-top: 16px;
-  padding: 8px 16px;
+  display: inline-block;
+  padding: 12px 24px;
   border: none;
   background: #e11d48;
   color: #fff;
-  border-radius: 6px;
-  width: 100%;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
 }
 
-/* ===================== */
-/* Mobile: full width    */
-/* ===================== */
+.popup-box button:hover {
+  background: #be123c;
+  transform: scale(1.05);
+}
+
+@keyframes popupScale {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 📱 Mobile */
 @media (max-width: 768px) {
   .wheel {
-    width: 95vw;   /* vòng quay chiếm 95% chiều ngang */
-    height: 95vw;  
-      max-width: none; /* giữ hình tròn */
+    width: 95vw !important;
+    aspect-ratio: 1 / 1;
   }
-
   .wheel-button {
-    width: 25vw;
-    height: 25vw;
-    font-size: 7vw;
-    border-width: 2vw;
+    width: 22vw;
+    height: 22vw;
+    font-size: 6vw;
   }
-
   .wheel-button-arrow {
-    top: -20%;
-    border-left: 10vw solid transparent;
-    border-right: 10vw solid transparent;
-    border-bottom: 18vw solid #e11d48;
+    top: -18%;
+    border-left: 9vw solid transparent;
+    border-right: 9vw solid transparent;
+    border-bottom: 15vw solid #e11d48;
   }
 
   .popup-box {
-    width: 95%;       /* rộng gần full màn hình */
-    max-width: none;  /* bỏ giới hạn 400px */
-    font-size: 5vw;
-    
-  }
-
-  .popup-box h2 {
+    width: 95vw;
+    min-height: 260px; /* cao hơn trên mobile */
     font-size: 6vw;
+    padding: 28px 20px;
+    border-radius: 16px;
   }
-
+  .popup-box h2 {
+    font-size: 7vw;
+    margin-bottom: 16px;
+  }
+  .popup-box p {
+    font-size: 5.5vw;
+    margin-bottom: 16px;
+  }
   .popup-box button {
-    font-size: 5vw;
-    padding: 12px;
+    font-size: 5.5vw;
+    padding: 14px;
+    border-radius: 10px;
   }
 }
 
-/* ===================== */
-/* PC: gọn gàng          */
-/* ===================== */
-@media (min-width: 769px) {
+/* 💻 Tablet */
+@media (min-width: 769px) and (max-width: 1200px) {
   .wheel {
-    width: 360px;
-    height: 360px;
+    width: 70vw;
+    aspect-ratio: 1 / 1;
+    max-width: 600px;
   }
-
   .wheel-button {
-    width: 90px;
-    height: 90px;
-    font-size: 18px;
-    border-width: 6px;
+    width: 120px;
+    height: 120px;
+    font-size: 22px;
   }
-
   .wheel-button-arrow {
-    top: -30px;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 34px solid #e11d48;
+    top: -40px;
+    border-left: 28px solid transparent;
+    border-right: 28px solid transparent;
+    border-bottom: 48px solid #e11d48;
   }
+}
 
+/* 🖥️ Desktop */
+@media (min-width: 1201px) {
+  .wheel {
+    width: 600px;
+    aspect-ratio: 1 / 1;
+  }
+  .wheel-button {
+    width: 140px;
+    height: 140px;
+    font-size: 26px;
+  }
+  .wheel-button-arrow {
+    top: -50px;
+    border-left: 32px solid transparent;
+    border-right: 32px solid transparent;
+    border-bottom: 56px solid #e11d48;
+  }
   .popup-box {
-    width: 90%;
-    max-width: 400px;
-    font-size: 16px;
+    max-width: 500px;
   }
 }
