@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
+import "./LuckyWheel.css";
 
 export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 }) {
   const segments = useMemo(() => {
@@ -15,7 +16,6 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
   const [rotation, setRotation] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
 
-  // canvas confetti toàn màn hình
   const canvasRef = useRef(null);
   const confettiInstanceRef = useRef(null);
 
@@ -87,81 +87,22 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
     }, spinDurationMs + 60);
   }
 
-  const size = 360;
+  const size = 360; // SVG dùng size cố định, responsive sẽ do CSS điều chỉnh
   const r = size / 2 - 6;
   const cx = size / 2;
   const cy = size / 2;
 
   return (
-    <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-      {/* Canvas confetti toàn màn hình */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-          zIndex: 1500   // trên overlay nhưng dưới popup box
-        }}
-      />
+    <div className="wheel-container">
+      <canvas ref={canvasRef} className="wheel-canvas" />
 
       <div style={{ position: "relative" }}>
-        {/* Nút tâm đỏ + mũi tên nhô ra → bấm vào để quay */}
-        <div
-          onClick={spin}
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 5,
-            width: 90,
-            height: 90,
-            borderRadius: "50%",
-            background: "#e11d48",
-            border: "6px solid #fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: 18,
-            cursor: "pointer",
-            userSelect: "none"
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: -29,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 0,
-              height: 0,
-              borderLeft: "20px solid transparent",
-              borderRight: "20px solid transparent",
-              borderBottom: "34px solid #e11d48"
-            }}
-          />
+        <div className="wheel-button" onClick={spin}>
           GO
+          <div className="wheel-button-arrow" />
         </div>
 
-        {/* Bánh xe */}
-        <div
-          style={{
-            width: size,
-            height: size,
-            borderRadius: "50%",
-            border: "4px solid #fff",
-            boxShadow: "0 8px 24px rgba(0,0,0,.12)",
-            transform: `rotate(${rotation}deg)`,
-            transition: isSpinning ? `transform ${spinDurationMs}ms cubic-bezier(0.12, 0.11, 0, 1)` : undefined,
-            background: "#fff",
-          }}
-        >
+        <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
           <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
             <circle cx={cx} cy={cy} r={r + 4} fill="#f3f4f6" />
             {Array.from({ length: n }).map((_, i) => {
@@ -195,47 +136,12 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
         </div>
       </div>
 
-      {/* Popup kết quả */}
       {showPopup && resultIndex !== null && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000   // overlay dưới confetti
-          }}
-          onClick={() => setShowPopup(false)}
-        >
-          <div
-            style={{
-              position: "relative",
-              background: "#fff",
-              padding: "24px 32px",
-              borderRadius: 12,
-              textAlign: "center",
-              minWidth: 280,
-              zIndex: 2000   // popup box cao nhất
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="popup-overlay" onClick={() => setShowPopup(false)}>
+          <div className="popup-box" onClick={(e) => e.stopPropagation()}>
             <h2 style={{ marginBottom: 12 }}>🎉 Chúc mừng!</h2>
             <p>Bạn đã trúng: <strong>{segments[resultIndex].label}</strong></p>
-            <button
-              onClick={() => setShowPopup(false)}
-              style={{
-                marginTop: 16,
-                padding: "8px 16px",
-                border: "none",
-                background: "#e11d48",
-                color: "#fff",
-                borderRadius: 6
-              }}
-            >
-              Đóng
-            </button>
+            <button onClick={() => setShowPopup(false)}>Đóng</button>
           </div>
         </div>
       )}

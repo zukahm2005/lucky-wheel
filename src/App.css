@@ -1,38 +1,33 @@
-.App {
-  text-align: center;
+/* Reset cho toàn trang */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+/* Container full màn hình */
+.app {
   min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;   /* căn giữa theo chiều dọc */
+  justify-content: center; /* căn giữa theo chiều ngang */
+  background: #f9fafb;   /* nền sáng nhẹ */
+}
+
+/* Nội dung chính */
+.app-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 16px;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Tiêu đề */
+.title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
