@@ -21,17 +21,24 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
 
   useEffect(() => {
     if (canvasRef.current && !confettiInstanceRef.current) {
-      confettiInstanceRef.current = confetti.create(canvasRef.current, { resize: true, useWorker: true });
+      confettiInstanceRef.current = confetti.create(canvasRef.current, {
+        resize: true,
+        useWorker: true,
+      });
     }
   }, []);
 
   const n = Math.max(segments.length, 1);
   const sliceAngle = 360 / n;
-  const totalWeight = useMemo(() => segments.reduce((sum, s) => sum + (s.weight || 1), 0), [segments]);
+  const totalWeight = useMemo(
+    () => segments.reduce((sum, s) => sum + (s.weight || 1), 0),
+    [segments]
+  );
 
+  // 🎨 Màu xen kẽ xanh + trắng
   function autoColor(i) {
-    const hue = Math.round((i / 12) * 360);
-    return `hsl(${hue}, 75%, 60%)`;
+    const colors = ["#6c98a3", "#ffffff"];
+    return colors[i % colors.length];
   }
 
   function polarToCartesian(cx, cy, r, angleDeg) {
@@ -56,11 +63,18 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
     return segments.length - 1;
   }
 
+  // 🎉 Hiệu ứng pháo giấy full màn
   function fireConfetti() {
     const c = confettiInstanceRef.current || confetti;
-    c({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
-    setTimeout(() => c({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 } }), 150);
-    setTimeout(() => c({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } }), 300);
+
+    // Bắn chính giữa
+    c({ particleCount: 200, spread: 180, startVelocity: 45, origin: { x: 0.5, y: 0.5 } });
+
+    // Bắn từ 4 góc
+    setTimeout(() => c({ particleCount: 100, spread: 120, angle: 60, origin: { x: 0, y: 1 } }), 200);
+    setTimeout(() => c({ particleCount: 100, spread: 120, angle: 120, origin: { x: 1, y: 1 } }), 200);
+    setTimeout(() => c({ particleCount: 100, spread: 120, angle: 240, origin: { x: 1, y: 0 } }), 400);
+    setTimeout(() => c({ particleCount: 100, spread: 120, angle: 300, origin: { x: 0, y: 0 } }), 400);
   }
 
   function spin() {
@@ -87,7 +101,7 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
     }, spinDurationMs + 60);
   }
 
-  // SVG gốc là 360x360
+  // SVG gốc 360x360
   const size = 360;
   const r = size / 2 - 6;
   const cx = size / 2;
@@ -95,17 +109,23 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
 
   return (
     <>
-      <div className="wheel-container">
-        <canvas ref={canvasRef} className="wheel-canvas" />
+      {/* Canvas để ngoài container → luôn phủ full màn */}
+      <canvas ref={canvasRef} className="wheel-canvas" />
 
+      <div className="wheel-container">
         <div style={{ position: "relative" }}>
           <div className="wheel-button" onClick={spin}>
-            GO
+            Quay
             <div className="wheel-button-arrow" />
           </div>
 
           <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
-            <svg viewBox={`0 0 ${size} ${size}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+            <svg
+              viewBox={`0 0 ${size} ${size}`}
+              width="100%"
+              height="100%"
+              preserveAspectRatio="xMidYMid meet"
+            >
               <circle cx={cx} cy={cy} r={r + 4} fill="#f3f4f6" />
               {Array.from({ length: n }).map((_, i) => {
                 const start = i * sliceAngle;
@@ -128,7 +148,7 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
                           style={{
                             fontSize: size * 0.045,
                             fontWeight: 700,
-                            fill: "#111827",
+                            fill: fill === "#6c98a3" ? "#fff" : "#111827",
                             pointerEvents: "none",
                           }}
                         >
@@ -144,7 +164,7 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500 
         </div>
       </div>
 
-      {/* Popup luôn tách ra ngoài vòng quay */}
+      {/* Popup */}
       {showPopup && resultIndex !== null && (
         <div className="popup-overlay" onClick={() => setShowPopup(false)}>
           <div className="popup-box" onClick={(e) => e.stopPropagation()}>

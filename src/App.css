@@ -1,4 +1,4 @@
-/* Reset cho toàn trang */
+/* Reset */
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -6,26 +6,50 @@ html, body, #root {
   width: 100%;
 }
 
-/* Container full màn hình */
+/* Poster nền */
 .app {
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100vw;
   display: flex;
-  align-items: center;   /* căn giữa theo chiều dọc */
-  justify-content: center; /* căn giữa theo chiều ngang */
-  background: #f9fafb;   /* nền sáng nhẹ */
-}
-
-.app-content {
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 16px;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+    background-position: bottom center;  /* ✅ giữ phần dưới (xe) luôn hiện */
+  /* background-position: top center; */
+  background-color: #6c98a3;
 }
 
-.title {
-  margin: 0;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
+/* Nội dung */
+.app-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Vòng quay */
+.wheel-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;              /* chiếm 80% chiều rộng màn hình */
+  max-width: 380px;         /* giới hạn max cho PC */
+}
+
+/* Căn vị trí theo poster:
+   Ở poster của bạn, khoảng trống xanh bắt đầu ~60% chiều cao.
+   Ta đặt vòng quay nằm ở đó. */
+@media (max-width: 768px) {
+  .wheel-wrapper {
+    top: 58%;               /* chỉnh xuống vùng xanh */
+    width: 85vw;            /* nhỏ vừa khít mobile */
+    max-width: 320px;
+  }
+}
+
+@media (min-width: 769px) {
+  .wheel-wrapper {
+    top: 60%;               /* PC vẫn căn xuống */
+  }
 }
