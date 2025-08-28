@@ -5,10 +5,11 @@ export default function SelectPopup({ onClose, onSelect }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("10tr");
 
-  const options = [
-    { label: "500.000VND", value: "500k" },
-    { label: "1.000.000VND", value: "1tr" },
-  ];
+const options = [
+  { label: "500.000VND", value: "500k" },
+  { label: "1.000.000VND", value: "1tr" },
+  { label: "2.000.000VND", value: "2tr" }, // ✅ thêm
+];
 
   return (
     <div className="popup-overlay" onClick={onClose}>

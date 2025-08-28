@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import "./LuckyWheel.css";
 
-export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500, selectedPrice }) {
+export default function LuckyWheel({
+  segments: _segments,
+  spinDurationMs = 4500,
+  selectedPrice,
+}) {
   const segments = useMemo(() => {
     return (_segments?.length ? _segments : []).map((s, i) => ({
       ...s,
@@ -16,7 +20,6 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500,
   const [rotation, setRotation] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
 
-  // state để biết có phải web hay không
   const [isWeb, setIsWeb] = useState(window.innerWidth > 1200);
 
   const canvasRef = useRef(null);
@@ -75,8 +78,12 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500,
 
   function fireConfetti() {
     const c = confettiInstanceRef.current || confetti;
-
-    c({ particleCount: 200, spread: 180, startVelocity: 45, origin: { x: 0.5, y: 0.5 } });
+    c({
+      particleCount: 200,
+      spread: 180,
+      startVelocity: 45,
+      origin: { x: 0.5, y: 0.5 },
+    });
     setTimeout(() => c({ particleCount: 100, spread: 120, angle: 60, origin: { x: 0, y: 1 } }), 200);
     setTimeout(() => c({ particleCount: 100, spread: 120, angle: 120, origin: { x: 1, y: 1 } }), 200);
     setTimeout(() => c({ particleCount: 100, spread: 120, angle: 240, origin: { x: 1, y: 0 } }), 400);
@@ -84,40 +91,46 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500,
   }
 
   function spin() {
-    if (isSpinning || segments.length === 0) return;
-    setIsSpinning(true);
-    setResultIndex(null);
+  if (isSpinning || segments.length === 0) return;
+  setIsSpinning(true);
+  setResultIndex(null);
 
-    let targetIndex;
+  let targetIndex;
 
-    // ✅ ép kết quả theo selectedPrice
-    if (selectedPrice === "500k") {
-      targetIndex = segments.findIndex((s) => s.label === "500.000VND");
-    } else if (selectedPrice === "1tr") {
-      targetIndex = segments.findIndex((s) => s.label === "1.000.000VND");
-    } else {
-      targetIndex = pickWeightedIndex();
-    }
-
-    if (targetIndex === -1) targetIndex = pickWeightedIndex();
-
-    const sliceCenterOffset = sliceAngle / 2;
-    const targetSliceStart = targetIndex * sliceAngle;
-    const targetCenter = targetSliceStart + sliceCenterOffset;
-
-    const extraSpins = 5 + Math.floor(Math.random() * 4);
-    const jitter = (Math.random() - 0.5) * (sliceAngle * 0.6);
-
-    const finalRotation = rotation + extraSpins * 360 + (360 - targetCenter) + jitter;
-    setRotation(finalRotation);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      setResultIndex(targetIndex);
-      setShowPopup(true);
-      fireConfetti();
-    }, spinDurationMs + 60);
+  if (selectedPrice === "500k") {
+    targetIndex = segments.findIndex((s) => s.label.includes("500.000"));
+  } else if (selectedPrice === "1tr") {
+    targetIndex = segments.findIndex((s) => s.label.includes("1.000.000"));
+  } else if (selectedPrice === "2tr") {
+    targetIndex = segments.findIndex((s) => s.label.includes("2.000.000"));
+  } else {
+    targetIndex = pickWeightedIndex();
   }
+
+  if (targetIndex === -1) targetIndex = pickWeightedIndex();
+
+  const sliceCenter = targetIndex * sliceAngle + sliceAngle / 2;
+  const extraSpins = 5 + Math.floor(Math.random() * 4);
+  const jitter = (Math.random() - 0.5) * (sliceAngle * 0.25);
+
+  // 🎯 Góc hiện tại (0–360)
+  const currentDeg = rotation % 360;
+
+  // 🎯 Góc cuối cùng cần đạt
+  const finalRotation =
+    extraSpins * 360 + (360 - sliceCenter - currentDeg) + jitter;
+
+  // ✅ Không cộng bừa prev, mà cộng theo finalRotation chính xác
+  setRotation((prev) => prev + finalRotation);
+
+  setTimeout(() => {
+    setIsSpinning(false);
+    setResultIndex(targetIndex);
+    setShowPopup(true);
+    fireConfetti();
+  }, spinDurationMs + 60);
+}
+
 
   const size = 360;
   const r = size / 2 - 6;
@@ -129,15 +142,20 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500,
       <canvas ref={canvasRef} className="wheel-canvas" />
 
       <div style={{ position: "relative" }}>
-        <div
-          className="wheel-button"
-          onClick={spin}
-        >
+        <div className="wheel-button" onClick={spin}>
           Quay
           <div className="wheel-button-arrow" />
         </div>
 
-        <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
+        <div
+          className="wheel"
+          style={{
+            transform: `rotate(${rotation}deg)`,
+            transition: isSpinning
+              ? `transform ${spinDurationMs}ms cubic-bezier(0.33, 1, 0.68, 1)`
+              : "none",
+          }}
+        >
           <svg
             viewBox={`0 0 ${size} ${size}`}
             width="100%"
@@ -151,14 +169,21 @@ export default function LuckyWheel({ segments: _segments, spinDurationMs = 4500,
               const path = arcPath(cx, cy, r, start, end);
               const fill = segments[i]?.color || autoColor(i);
               const mid = start + sliceAngle / 2;
-              const labelPos = polarToCartesian(cx, cy, r * (isWeb ? 0.72 : 0.6), mid);
+              const labelPos = polarToCartesian(
+                cx,
+                cy,
+                r * (isWeb ? 0.72 : 0.6),
+                mid
+              );
               const rotateText = mid + 90;
 
               return (
                 <g key={i}>
                   <path d={path} fill={fill} stroke="#fff" strokeWidth={2} />
                   {segments[i] && (
-                    <g transform={`translate(${labelPos.x}, ${labelPos.y}) rotate(${rotateText})`}>
+                    <g
+                      transform={`translate(${labelPos.x}, ${labelPos.y}) rotate(${rotateText})`}
+                    >
                       <text
                         x={0}
                         y={0}
