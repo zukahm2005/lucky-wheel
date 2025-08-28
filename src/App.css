@@ -6,19 +6,15 @@ html, body, #root {
   width: 100%;
 }
 
-/* Poster nền */
 .app {
-  min-height: 100dvh;
-  width: 100vw;
+
+  min-height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-repeat: no-repeat;
-  background-size: cover;
-    background-position: bottom center;  /* ✅ giữ phần dưới (xe) luôn hiện */
-  /* background-position: top center; */
-  background-color: #6c98a3;
+    background-color: #6c98a3;  
+  
 }
 
 /* Nội dung */
@@ -33,23 +29,20 @@ html, body, #root {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 80vw;              /* chiếm 80% chiều rộng màn hình */
-  max-width: 380px;         /* giới hạn max cho PC */
+  width: 80vw;
+  max-width: 380px;
 }
 
-/* Căn vị trí theo poster:
-   Ở poster của bạn, khoảng trống xanh bắt đầu ~60% chiều cao.
-   Ta đặt vòng quay nằm ở đó. */
 @media (max-width: 768px) {
   .wheel-wrapper {
-    top: 58%;               /* chỉnh xuống vùng xanh */
-    width: 85vw;            /* nhỏ vừa khít mobile */
+    top: 58%;
+    width: 85vw;
     max-width: 320px;
   }
 }
 
 @media (min-width: 769px) {
   .wheel-wrapper {
-    top: 60%;               /* PC vẫn căn xuống */
+    top: 60%;
   }
 }

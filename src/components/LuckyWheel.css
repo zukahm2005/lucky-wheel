@@ -53,7 +53,8 @@
   margin: 0 auto;
   transition: transform 4.5s cubic-bezier(0.12, 0.11, 0, 1);
   aspect-ratio: 1 / 1;
-  width: 500px;
+  width: 100%;       /* ✅ cho nó co theo container */
+  max-width: 500px;  /* PC không to quá */
 }
 
 /* Popup overlay */
@@ -62,6 +63,7 @@
   inset: 0;
   width: 800px;
   display: flex;
+  margin-bottom: 200px;
   margin-left: -200px;
   align-items: center;
   justify-content: center;
@@ -171,13 +173,29 @@
 
 /* 🖥️ Desktop */
 @media (min-width: 1201px) {
-  .wheel { width: 600px; }
-  .wheel-button { width: 140px; height: 140px; font-size: 26px; }
+  .wheel { width: 400px; }
+  .wheel-button { width: 120px; height: 120px; font-size: 26px; }
   .wheel-button-arrow {
-    top: -50px;
+    top: -45px;
     border-left: 32px solid transparent;
     border-right: 32px solid transparent;
     border-bottom: 56px solid #e11d48;
   }
   .popup-box { max-width: 700px; }
+}
+.wheel-container-web {
+  max-width: 430px;       /* bằng đúng width thiết kế ảnh */
+  margin: 0 auto;
+  /* background: url("/bg-desktop.png") no-repeat top center; */
+  background-size: contain;   /* giữ nguyên tỉ lệ, không bị phóng */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 40px;
+}
+@media (min-width: 1200px) {
+  .wheel text {
+    font-size: 14px !important;  /* bé hơn */
+  }
 }
