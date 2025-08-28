@@ -9,10 +9,10 @@
 /* Canvas confetti */
 .wheel-canvas {
   position: fixed;
-  top: 0;
-  left: 0;
+  /* top: 0;
+  left: 0; */
   width: 100%;
-  height: 100%;
+  height: 400px;
   pointer-events: none;
   z-index: 10000;
 }
@@ -173,7 +173,7 @@
 
 /* 🖥️ Desktop */
 @media (min-width: 1201px) {
-  .wheel { width: 400px; }
+  .wheel { width: 340px; }
   .wheel-button { width: 120px; height: 120px; font-size: 26px; }
   .wheel-button-arrow {
     top: -45px;
